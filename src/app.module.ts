@@ -1,4 +1,3 @@
-import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
@@ -11,7 +10,8 @@ import { CommonService } from './common/common.service';
 import { TodoModule } from './todo/todo.module';
 import { TodoController } from './todo/todo.controller';
 import { TodoService } from './todo/todo.service';
-import { TodoStatsController } from './todo/controllers/todo-stats.controller';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { AuthMiddleware } from './middleware/auth.middleware';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -25,4 +25,10 @@ controllers: [AppController,TestController,TodoController],
 providers: [AppService,TestService,CommonService,TodoService],
   
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes('todos'); // Applique le middleware uniquement au contrôleur `todos`
+  }
+}

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, ParseIntPipe, Query, Req } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
@@ -10,17 +10,13 @@ import { PaginatedResponse } from './interfaces/paginated-response.interface';
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
-
- 
-
-
   // Créer un todo
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async create(@Body() createTodoDto: CreateTodoDto): Promise<TodoEntity> {
-    return await this.todoService.addTodo(createTodoDto);
+  async create(@Body() createTodoDto: CreateTodoDto, @Req() req: Request): Promise<TodoEntity> {
+    const userId = req['userId'];
+    return await this.todoService.addTodo(createTodoDto, userId);
   }
-
   
    // Récupérer tous les todos
    @Get()
@@ -69,31 +65,4 @@ export class TodoController {
    async restore(@Param('id', ParseIntPipe) id: number): Promise<TodoEntity> {
      return await this.todoService.restore(id);
    }
-  /*
-  @Post()
-  @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todoService.create(createTodoDto);
-  }
-    
-  @Get()
-  findAll() {
-    return this.todoService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todoService.findOne(+id);
-  }
-
-  @Patch(':id')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todoService.update(+id, updateTodoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todoService.remove(+id);
-  }*/
 }

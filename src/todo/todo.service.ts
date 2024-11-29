@@ -74,10 +74,11 @@ export class TodoService {
       throw error;
     }
   }
-   async addTodo(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
-    // Création d'une nouvelle instance de TodoEntity à partir du DTO
-    const newTodo = this.todoRepository.create(createTodoDto);
-
+   async addTodo(createTodoDto: CreateTodoDto,userId: number): Promise<TodoEntity> {
+    const newTodo = this.todoRepository.create({
+      ...createTodoDto,
+      userId, // Ajout automatique de userId
+    });
     // Sauvegarde du nouvel enregistrement dans la base de données
     return await this.todoRepository.save(newTodo);
   }
@@ -108,6 +109,18 @@ export class TodoService {
   async restore(id: number): Promise<TodoEntity> {
     await this.todoRepository.restore(id);
     return this.findOne(id);
+  }
+
+  // For your stats method, use the unwrapped data
+  async getStatusCount(): Promise<{ [key in StatusEnum]: number }> {
+    console.log('Fetching counts by status...');
+    const counts = {
+      [StatusEnum.PENDING]: await this.todoRepository.count({ where: { status: StatusEnum.PENDING } }),
+      [StatusEnum.IN_PROGRESS]: await this.todoRepository.count({ where: { status: StatusEnum.IN_PROGRESS } }),
+      [StatusEnum.DONE]: await this.todoRepository.count({ where: { status: StatusEnum.DONE } }),
+    };
+    console.log('Counts:', counts);
+    return counts;
   }
 
 }
