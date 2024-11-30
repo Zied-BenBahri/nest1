@@ -1,34 +1,37 @@
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CommonModule } from './common/common.module';
-import { TestModule } from './test/test.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TodoEntity } from './todo/entities/todo.entity';
-import { TestController } from './test/test.controller';
-import { TestService } from './test/test.service';
-import { CommonService } from './common/common.service';
 import { TodoModule } from './todo/todo.module';
-import { TodoController } from './todo/todo.controller';
-import { TodoService } from './todo/todo.service';
 import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AuthMiddleware } from './middleware/auth.middleware';
+import { UserModule } from './user/user.module';
+import { CvModule } from './cv/cv.module';
+import { SkillModule } from './skill/skill.module';
+import { Cv } from './cv/entities/cv.entity';
+import { User } from './user/entities/user.entity';
+import { Skill } from './skill/entities/skill.entity';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'sqlite',
-    database: 'db.sqlite',
-    entities: [TodoEntity],
-    synchronize: true, // N'utilisez pas cette option en production !
-  }),TypeOrmModule.forFeature([TodoEntity])
-,TestModule,CommonModule, TodoModule],
-controllers: [AppController,TestController,TodoController],
-providers: [AppService,TestService,CommonService,TodoService],
-  
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: [TodoEntity, Cv, User, Skill],
+      synchronize: true,
+    }),
+
+    /*TestModule,CommonModule, */
+    TodoModule,
+    UserModule,
+    CvModule,
+    SkillModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService /*TestService,CommonService,*/],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .forRoutes('todos'); // Applique le middleware uniquement au contrôleur `todos`
+    consumer.apply(AuthMiddleware).forRoutes('todos');
   }
 }

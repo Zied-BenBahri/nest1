@@ -5,7 +5,7 @@ import { CommonService } from '../common/common.service';
 export class TestService {
   constructor(private readonly commonService: CommonService) {}
 
-  testUuidGeneration(): string {
+ /* testUuidGeneration(): string {
     return this.commonService.generateUuid();
-  }
+  }*/
 }

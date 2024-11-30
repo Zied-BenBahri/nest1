@@ -7,7 +7,6 @@ export class TodoEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  
   userId: number; // Identifiant de l'utilisateur créateur du todo
   
   @Column()

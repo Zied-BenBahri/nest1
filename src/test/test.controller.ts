@@ -4,9 +4,9 @@ import { TestService } from './test.service';
 @Controller('test')
 export class TestController {
   constructor(private readonly testService: TestService) {}
-
+/*
   @Get('uuid')
   getUuid(): string {
     return this.testService.testUuidGeneration();
-  }
+  }*/
 }
